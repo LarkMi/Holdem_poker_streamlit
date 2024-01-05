@@ -16,7 +16,7 @@ def main():
     room = st.radio(
         "选择游戏房间",
         key="visibility",
-        options=pickle.load('room'),
+        options=pickle.load(open('room','rb')),
     )
     
 if __name__ == '__main__':
