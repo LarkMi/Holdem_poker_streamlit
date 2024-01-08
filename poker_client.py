@@ -164,8 +164,8 @@ def game_page(games_info):
                 container.write('**:red[All in]**')
             elif players[i] in games_info['players']:
                 container.write('**-**')
-            else:
-                container.write('**×**')
+            elif games_info['state'] != 'finished':
+                    continue
             container.text('{}'.format(players[i]))
             
             position = games_info['players_in_game'].index(players[i])
