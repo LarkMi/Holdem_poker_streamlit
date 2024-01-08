@@ -240,15 +240,14 @@ if __name__ == '__main__':
         if st.session_state.state != 'login':
             st.header('User: {}'.format(st.session_state.name))
             
-    match st.session_state.state:
-        case 'login':
-            login()
-        case 'room':
-            room()
-        case 'in_room':
-            in_room()        
-        case 'game':
-            game()
+    if st.session_state.state == 'login':
+        login()
+    elif st.session_state.state == 'room':
+        room()
+    elif st.session_state.state == 'in_room':
+        in_room()        
+    elif st.session_state.state == 'game':
+        game()
     
     st_autorefresh(interval=800, limit=1000000, key="fizzbuzzcounter")
 
