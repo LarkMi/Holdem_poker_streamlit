@@ -1,7 +1,5 @@
 streamlit
 streamlit-autorefresh
-threading
 pickle
-math
 typing
 flask
