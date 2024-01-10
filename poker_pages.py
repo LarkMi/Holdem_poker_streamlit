@@ -224,6 +224,7 @@ def game_page(games_info):
         
 
 def write_last_game(container,last_game):
+    print(last_game)
     if last_game['names'] != {}:
         container.subheader('上一局结果:')
         container.write('公共牌: {}'.format(encode_cards(last_game['public_cards'])))
