@@ -170,9 +170,7 @@ def game_page(games_info):
             elif players[i] in games_info['players']:
                 container.write('**-**')
             else:
-                if games_info['state'] != 'finished':
-                    continue
-                # container.write('**×**')
+                container.write('**×**')
             container.text('{}'.format(players[i]))
             
             position = games_info['players_in_game'].index(players[i])
@@ -253,11 +251,16 @@ if __name__ == '__main__':
         if st.session_state.state != 'login':
             st.header('User: {}'.format(st.session_state.name))
             
-    if st.session_state.state == 'login':
-        login_page()
-    elif st.session_state.state == 'room':
-        room()
-    elif st.session_state.state == 'in_room':
-        in_room()        
-    elif st.session_state.state == 'game':
-        game()
+    match st.session_state.state:
+        case 'login':
+            login()
+        case 'room':
+            room()
+        case 'in_room':
+            in_room()        
+        case 'game':
+            game()
+    
+    st_autorefresh(interval=800, limit=1000000, key="fizzbuzzcounter")
+
+    
