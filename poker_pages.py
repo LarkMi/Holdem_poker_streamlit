@@ -49,6 +49,7 @@ def in_room():
     with col1:
         st.title('**Room: {}**'.format(st.session_state.room))
     with col2:
+        st.divider()
         if st.button('退出'):
             exit_room(st.session_state.room,st.session_state.name)
             st.session_state.state = 'room'
