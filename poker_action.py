@@ -3,7 +3,11 @@ import pickle
 import streamlit as st
 from poker_gamethread import GameThread
 from collections import defaultdict
+import os
 
+if 'id_pwd' not in os.listdir():
+    with open('id_pwd','wb') as f:
+        pickle.dump({},f)
 
 def init_server_state():
     with server_state_lock["rooms"]:  # Lock the "count" state for thread-safety
