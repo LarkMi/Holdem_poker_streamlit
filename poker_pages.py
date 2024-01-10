@@ -26,7 +26,7 @@ def room():
     rooms = get_rooms()
     choose_room = st.radio('选择要加入的房间:',options=rooms)
     if choose_room:
-        choose_room = choose_room[:choose_room.index(' ')]
+        choose_room = choose_room[:choose_room.rindex(' ')]
     
         if st.button(label='加入'):
             req = join_room(choose_room,st.session_state.name)
