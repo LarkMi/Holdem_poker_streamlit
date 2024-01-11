@@ -1,6 +1,7 @@
 import streamlit as st
 from poker_pages import login_page, room, in_room, game
 from poker_action import init_server_state
+from streamlit_server_state import server_state, server_state_lock
 
 def init():
     if 'state' not in st.session_state:
@@ -9,7 +10,9 @@ def init():
         st.session_state.chips = 2000
     if 'name' not in st.session_state:
         st.session_state.name = None
-    init_server_state()
+    with server_state_lock["rooms"]:  # Lock the "count" state for thread-safety
+        if "rooms" not in server_state:
+            server_state.rooms = defaultdict(dict)
 
 if __name__ == '__main__':
     #st.write(st.session_state)
