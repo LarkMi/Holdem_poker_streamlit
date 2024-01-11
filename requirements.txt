@@ -1,3 +1,2 @@
 streamlit==1.29.0
 typing
-git+https://github.com/LarkMi/streamlit-server-state.git
