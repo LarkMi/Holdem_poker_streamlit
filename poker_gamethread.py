@@ -2,6 +2,7 @@ from poker_engine import Game
 from poker_judge import Judge
 
 from collections import defaultdict
+import time
 
 class GameThread():
     def __init__(self, players_info:dict):
@@ -140,5 +141,6 @@ class GameThread():
 
         self.player_to_action = -1
         self.refresh(players, i, pre_state,now_state)
+        time.sleep(1)
         #t = Thread(target=self.refresh(players, i, pre_state,now_state))
         #t.start()
