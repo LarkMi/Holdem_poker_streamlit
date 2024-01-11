@@ -58,6 +58,7 @@ def get_this_session() -> AppSession:
     this_session_info = get_this_session_info()
     st.write('st.write(this_session_info):')
     st.write(this_session_info)
+    st.write('st.write(this_session_info is None):')
     st.write(this_session_info is None)
     if this_session_info is None:
         raise NoSessionError(
