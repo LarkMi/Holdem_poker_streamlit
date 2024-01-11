@@ -59,8 +59,8 @@ def get_this_session() -> AppSession:
     st.write('st.write(this_session_info):')
     st.write(this_session_info)
     st.write('st.write(this_session_info is None):')
-    st.write(this_session_info is None)
     if this_session_info is None:
+        st.write('this_session_info is None')
         raise NoSessionError(
             "Oh noes. Couldn't get your Streamlit Session object. "
             "Are you doing something fancy with threads?"
