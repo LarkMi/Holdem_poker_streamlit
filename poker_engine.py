@@ -127,7 +127,7 @@ class Game(object):
         self.games_info['chips'][player]      -= pot_changed
 
     def finish(self):
-        
+        self.games_info['public_cards'] = [(1,14),(2,14),(3,14),(4,14),(5,14),(1,13)]
         self.games_info['names'] += self.games_info['all_in_player']
         if len(self.games_info['names']) == 0: return
         if self.current_state != 'finish' or len(self.games_info['names']) == [1]:
