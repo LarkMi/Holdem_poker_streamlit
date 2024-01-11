@@ -166,7 +166,7 @@ def action(room_name,name,act):
     with server_state_lock.rooms:
         rooms = server_state.rooms
     rooms[room_name]['game'].round(name,act)
-    force_rerun_bound_sessions('rooms')
+    #force_rerun_bound_sessions('rooms')
 
 def join_game(room_name,name,buy_in):
     with server_state_lock.rooms:
