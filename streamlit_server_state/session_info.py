@@ -10,8 +10,6 @@ from ._compat import (
 )
 from .server import get_current_server
 
-import streamlit as st
-
 # Ref: https://gist.github.com/tvst/036da038ab3e999a64497f42de966a92
 
 
@@ -56,11 +54,7 @@ def get_this_session_info() -> Optional[SessionInfo]:
 
 def get_this_session() -> AppSession:
     this_session_info = get_this_session_info()
-    st.write('st.write(this_session_info):')
-    st.write(this_session_info)
-    st.write('st.write(this_session_info is None):')
     if this_session_info is None:
-        st.write('this_session_info is None')
         raise NoSessionError(
             "Oh noes. Couldn't get your Streamlit Session object. "
             "Are you doing something fancy with threads?"
