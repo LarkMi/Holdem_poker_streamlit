@@ -2,6 +2,7 @@ import streamlit as st
 from poker_pages import login_page, room, in_room, game
 from poker_action import init_server_state
 from streamlit_server_state import server_state, server_state_lock
+from collections import defaultdict
 
 def init():
     if 'state' not in st.session_state:
