@@ -100,7 +100,7 @@ class GameThread():
 
         return
     
-    def refresh(self, players, i, pre_state,now_state ):
+    def refresh(self, players, i, pre_state,now_state):
         #print(players,pre_state,now_state)
         #time.sleep(0.5)
         games_info = self.game.games_info
@@ -144,7 +144,6 @@ class GameThread():
 
         self.player_to_action = -1
         self.refresh(players, i, pre_state,now_state)
-        time.sleep(1)
         return
         #t = Thread(target=self.refresh(players, i, pre_state,now_state))
         #t.start()
