@@ -23,6 +23,8 @@ if __name__ == '__main__':
         st.title('德州扑克')
         if st.session_state.state != 'login':
             st.header('User: {}'.format(st.session_state.name))
+        if st.button('rerun'):
+            st.rerun()
 
     
     if st.session_state.state == 'login':
