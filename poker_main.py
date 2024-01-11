@@ -6,7 +6,7 @@ from collections import defaultdict
 
 if "rooms" not in server_state:
     with server_state_lock["rooms"]:
-        server_state.rooms = defaultdict(dict)
+        server_state.rooms = defaultdict(int)
 
 def init():
     if 'state' not in st.session_state:
@@ -23,6 +23,12 @@ if __name__ == '__main__':
         st.title('德州扑克')
         if st.session_state.state != 'login':
             st.header('User: {}'.format(st.session_state.name))
+
+    if st.button('test'):
+         with server_state_lock["rooms"]:
+            server_state.rooms['1'] += 1
+    
+    '''
     if st.session_state.state == 'login':
         login_page()
     elif st.session_state.state == 'room':
@@ -31,3 +37,4 @@ if __name__ == '__main__':
         in_room()        
     elif st.session_state.state == 'game':
         game()
+    '''
