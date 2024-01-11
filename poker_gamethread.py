@@ -97,6 +97,8 @@ class GameThread():
         self.pot = 30
         self.public_cards = []
         self.max_bet_now = 0
+
+        return
     
     def refresh(self, players, i, pre_state,now_state ):
         #print(players,pre_state,now_state)
@@ -114,6 +116,7 @@ class GameThread():
                 self.public_cards = self.game.games_info['public_cards'].copy()
             #time.sleep(1)
             self.restart()
+            return
         else:
             if pre_state != now_state:
                 self.player_to_action = games_info['names'][0]
@@ -142,5 +145,6 @@ class GameThread():
         self.player_to_action = -1
         self.refresh(players, i, pre_state,now_state)
         time.sleep(1)
+        return
         #t = Thread(target=self.refresh(players, i, pre_state,now_state))
         #t.start()
