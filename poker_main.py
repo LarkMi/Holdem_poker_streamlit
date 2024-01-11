@@ -29,8 +29,8 @@ if __name__ == '__main__':
         login_page()
     elif st.session_state.state == 'room':
         room()
-        elif st.session_state.state == 'in_room':
-            in_room()        
-        elif st.session_state.state == 'game':
-            game()
+    elif st.session_state.state == 'in_room':
+        in_room()        
+    elif st.session_state.state == 'game':
+        game()
         
