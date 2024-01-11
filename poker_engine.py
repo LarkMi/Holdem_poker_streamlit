@@ -86,7 +86,7 @@ class Game(object):
         
         betted_chip, chip = self.games_info['bet_chip'][player], self.games_info['chips'][player]
         
-        need_to_call = self.max_bet - betted_chip
+        need_to_call = min(self.max_bet - betted_chip, chip)
         
         names = self.games_info['names'][:]
         
