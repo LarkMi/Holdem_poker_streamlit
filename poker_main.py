@@ -12,6 +12,11 @@ def init():
         st.session_state.chips = 2000
     if 'name' not in st.session_state:
         st.session_state.name = None
+    if 'last_game' not in st.session_state:
+        st.session_state['last_game'] = {
+            'public_cards':[],
+            'names':defaultdict(dict)
+        }
     if "rooms" not in server_state:
         with server_state_lock["rooms"]:
             server_state.rooms = defaultdict(dict)
