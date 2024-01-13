@@ -184,7 +184,7 @@ def game_page(games_info):
     if st.session_state.name == games_info['player_to_action']:
         col1, col2, col3 = st.columns(3)
         with col1:
-            if st.button('弃牌') and st.session_state['last_game'] == games_info['last_game']:
+            if st.button('弃牌'):# and st.session_state['last_game'] == games_info['last_game']:
                 action(st.session_state.room,st.session_state.name,-2)
         if games_info['max_bet'] >= games_info['chips'][my_name] + games_info['bet_chip'][my_name]:
             with col2:
