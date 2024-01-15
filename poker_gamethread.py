@@ -44,7 +44,6 @@ class GameThread():
     
     def restart(self):
         #print(self.players_name)
-        print(self.game.games_info['chips'])
         for each in self.game.games_info['chips']:
             if self.game.games_info['chips'][each] < 20:
                 self.remove_player.append(each)
@@ -85,7 +84,6 @@ class GameThread():
         games_info['public_cards'] = []
         games_info['all_in_player'] = []
         games_info['card_point'] = defaultdict(int)
-        #print(self.players_name)
         self.ini_chips = games_info['chips'].copy()
         self.game = Game(games_info,self.judge)
         if len(games_info['names']) <= 2:
@@ -101,7 +99,6 @@ class GameThread():
         return
     
     def refresh(self, players, i, pre_state,now_state):
-        #print(players,pre_state,now_state)
         #time.sleep(0.5)
         games_info = self.game.games_info
         
@@ -140,7 +137,6 @@ class GameThread():
         i = self.game.games_info['names'].index(players)
         self.game.round(players,action)
         now_state = self.game.current_state
-        print(players,action,pre_state,now_state)
 
         self.player_to_action = -1
         self.refresh(players, i, pre_state,now_state)

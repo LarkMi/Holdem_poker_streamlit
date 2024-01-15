@@ -1,6 +1,9 @@
 import streamlit as st
 from copy import deepcopy
 from poker_action import signup, login, get_rooms, create_room, join_room, get_room_info, refreash_buyin, exit_room, start_game, get_game_info, action, join_game, restart_game
+from streamlit import session_state
+import numpy as np
+from PIL import Image
 
 def login_page():
     
@@ -11,8 +14,8 @@ def login_page():
         if st.button(label='登录'):
             req = login(name,pwd)
             if req == 'login success':
-                st.session_state.state = 'room'
-                st.session_state.name = name
+                session_state.state = 'room'
+                session_state.name = name
                 st.rerun()
             else:
                 st.warning(req)
@@ -29,16 +32,16 @@ def room():
         choose_room = choose_room[:choose_room.rindex(' ')]
     
         if st.button(label='加入'):
-            req = join_room(choose_room,st.session_state.name)
+            req = join_room(choose_room,session_state.name)
             if req == 'join fail':
                 st.warning('该房间已满员')
     
     room_name = st.text_input(label='输入创建的房间名:')
     if st.button(label='创建'):
-        req = create_room(str(room_name),st.session_state.name)
+        req = create_room(str(room_name),session_state.name)
         if req == 'create success':
-            st.session_state.room = room_name
-            st.session_state.state = 'in_room'
+            session_state.room = room_name
+            session_state.state = 'in_room'
             st.rerun()
         else:
             st.warning('该房间已存在')
@@ -47,14 +50,14 @@ def room():
 def in_room():
     col1, col2 = st.columns(2)
     with col1:
-        st.title('**Room: {}**'.format(st.session_state.room))
+        st.title('**Room: {}**'.format(session_state.room))
     with col2:
         st.divider()
         if st.button('退出'):
-            exit_room(st.session_state.room,st.session_state.name)
-            st.session_state.state = 'room'
+            exit_room(session_state.room,session_state.name)
+            session_state.state = 'room'
             return
-    req = get_room_info(st.session_state.room,st.session_state.name,st.session_state.chips)
+    req = get_room_info(session_state.room,session_state.name,session_state.chips)
     #st.write(req)
     st.write('**以下玩家已加入:**')
     for each in req['players']:
@@ -62,13 +65,13 @@ def in_room():
             st.write('***{}**    买入: {}'.format(each,req['buy_in'][each]))
         else:
             st.write('{}    买入: {}'.format(each,req['buy_in'][each]))
-    st.session_state.players = req['players']
+    session_state.players = req['players']
     st.slider('带入筹码量:',key='chips',value=2000,min_value =2000, max_value=10000, step =1000,on_change=refreash_buyin)
 
     if req['game'] != None:
         
         if req['game'] == 1:
-            st.session_state.state = 'game'
+            session_state.state = 'game'
             st.rerun()
             return
         with st.sidebar:
@@ -76,16 +79,16 @@ def in_room():
             write_last_game(container,req['last_game'])
         
         if st.button('加入游戏'):
-            join_game(st.session_state.room,st.session_state.name,st.session_state.chips)
-            st.session_state.state = 'game'
+            join_game(session_state.room,session_state.name,session_state.chips)
+            session_state.state = 'game'
         return 
-    if st.session_state.name == req['owner']:
+    if session_state.name == req['owner']:
         if st.button('开始'):
             if len(req['players']) == 1 or len(req['players']) > 8:
                 st.warning('人数需要在2 - 8人')
             else:
                 #time.sleep(1)
-                start_game(st.session_state.room)
+                start_game(session_state.room)
     else:
         st.write('**等待房主开始游戏……**')
 
@@ -97,7 +100,6 @@ def encode_cards(cards:list):
         return ' '.join(cards)
     decors = [':red[♥',':red[♦','♠','♣']
     s = ['J','Q','K','A']
-    #print(st.session_state.name,cards)
     for i in range(len(cards)):
         size, decor = cards[i]
         if size >= 11:
@@ -110,21 +112,21 @@ def game():
     with col2:
         st.divider()
         if st.button('退出'):
-            exit_room(st.session_state.room,st.session_state.name)
+            exit_room(session_state.room,session_state.name)
             return 
-    games_info = get_game_info(st.session_state.room)
+    games_info = get_game_info(session_state.room)
     with col1:
-        st.title('**Room: {}**——第{}局'.format(st.session_state.room,games_info['game_count']))
+        st.title('**Room: {}**——第{}局'.format(session_state.room,games_info['game_count']))
 
-    if st.session_state.name not in games_info['players_in_game'] and st.session_state.name not in games_info['add_player']:
-        st.session_state.state = 'in_room'
+    if session_state.name not in games_info['players_in_game'] and session_state.name not in games_info['add_player']:
+        session_state.state = 'in_room'
         st.rerun()
         return 
     game_page(games_info)
 
 def game_page(games_info):
     #st.write(games_info)
-    my_name = st.session_state.name
+    my_name = session_state.name
     
     #st.write(games_info)
     
@@ -181,30 +183,31 @@ def game_page(games_info):
                 container.write('**{}**'.format(hand_cards[players[i]]))
             else:
                 container.write('**&nbsp;?&nbsp;?**')
-    if st.session_state.name == games_info['player_to_action']:
+            
+    if session_state.name == games_info['player_to_action']:
         col1, col2, col3 = st.columns(3)
         with col1:
-            if st.button('弃牌'):# and st.session_state['last_game'] == games_info['last_game']:
-                action(st.session_state.room,st.session_state.name,-2)
+            if st.button('弃牌'):
+                action(session_state.room,session_state.name,-2)
         if games_info['max_bet'] >= games_info['chips'][my_name] + games_info['bet_chip'][my_name]:
             with col2:
                 if st.button('All in {}'.format(games_info['chips'][my_name])):
-                    action(st.session_state.room,st.session_state.name,games_info['chips'][my_name])
+                    action(session_state.room,session_state.name,games_info['chips'][my_name])
         else:
             with col2:
                 call = games_info['max_bet']-games_info['bet_chip'][my_name]
                 text = '过牌' if call == 0 else '跟注 {}'.format(call)
                 if st.button(text):
-                    action(st.session_state.room,st.session_state.name,call)        
+                    action(session_state.room,session_state.name,call)        
             with col3:
                     act = st.number_input(label=' ',min_value=min(20+games_info['max_bet']-games_info['bet_chip'][my_name],games_info['chips'][my_name]),max_value=games_info['chips'][my_name],step=20)
                     if st.button('加注 {}'.format(act)):
-                        action(st.session_state.room,st.session_state.name,act)
+                        action(session_state.room,session_state.name,act)
     if len(games_info['players_in_game']) <= 1:
         if games_info['add_player'] != {}:
             st.write('已加入玩家: {}'.format(' '.join(games_info['add_player'].keys())))
             if st.button('重新开始'):
-                restart_game(st.session_state.room)
+                restart_game(session_state.room)
             else:
                 st.warning('玩家还未加入')
     
@@ -216,7 +219,7 @@ def game_page(games_info):
             grade[each] = games_info['ini_chips'][each] - games_info['buy_in'][each]
             if each in games_info['add_player']:
                 grade[each] = games_info['ini_chips'][each] - games_info['buy_in'][each] +  games_info['add_player'][each]
-        st.session_state['last_game'] = deepcopy(games_info['last_game'])
+
         for each in grade:
             container.write('{}: :{}[{}{}]'.format('**:rainbow[{}]**'.format(each) if grade[each] == max(grade.values()) else each,'red' if grade[each] >= 0 else 'green','+' if grade[each] >= 0 else '',grade[each]))
         container = st.container(border=True)
@@ -224,7 +227,6 @@ def game_page(games_info):
         
 
 def write_last_game(container,last_game):
-    print('last_game_info:',st.session_state.name,last_game)
     if last_game['names'] != {}:
         container.subheader('上一局结果:')
         container.write('公共牌: {}'.format(encode_cards(last_game['public_cards'])))
