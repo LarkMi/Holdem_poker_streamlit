@@ -13,6 +13,8 @@ def init():
         session_state.name = None
     if 'room' not in session_state:
         session_state.room = 'null'
+    if 'game_count' not in session_state:
+        session_state.game_count = 1
     init_server_state()
 
 if __name__ == '__main__':

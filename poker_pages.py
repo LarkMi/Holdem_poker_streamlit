@@ -69,7 +69,8 @@ def in_room():
     st.slider('带入筹码量:',key='chips',value=2000,min_value =2000, max_value=10000, step =1000,on_change=refreash_buyin)
 
     if req['game'] != None:
-        
+        session_state.game_count = req['game_count']
+
         if req['game'] == 1:
             session_state.state = 'game'
             st.rerun()
@@ -187,7 +188,7 @@ def game_page(games_info):
     if session_state.name == games_info['player_to_action']:
         col1, col2, col3 = st.columns(3)
         with col1:
-            if st.button('弃牌'):
+            if st.button('弃牌') and session_state.game_count == games_info['game_count']:
                 action(session_state.room,session_state.name,-2)
         if games_info['max_bet'] >= games_info['chips'][my_name] + games_info['bet_chip'][my_name]:
             with col2:
@@ -203,6 +204,7 @@ def game_page(games_info):
                     act = st.number_input(label=' ',min_value=min(20+games_info['max_bet']-games_info['bet_chip'][my_name],games_info['chips'][my_name]),max_value=games_info['chips'][my_name],step=20)
                     if st.button('加注 {}'.format(act)):
                         action(session_state.room,session_state.name,act)
+    session_state.game_count = games_info['game_count']
     if len(games_info['players_in_game']) <= 1:
         if games_info['add_player'] != {}:
             st.write('已加入玩家: {}'.format(' '.join(games_info['add_player'].keys())))

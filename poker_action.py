@@ -88,6 +88,7 @@ def get_room_info(room_name,name,chips):
         if name in rooms[room_name]['game'].players_name:
             re['game'] = 1
         re['last_game'] = rooms[room_name]['game'].last_game
+        re['game_count'] = rooms[room_name]['game'].game_count
         return re
     rooms[room_name]['buy_in'][name] = chips
 
