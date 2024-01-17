@@ -2,8 +2,11 @@ from poker_engine import Game
 from poker_judge import Judge
 
 from collections import defaultdict
+from threading import Thread
+from streamlit_server_state import server_state, server_state_lock,force_rerun_bound_sessions
 import time
 
+    
 class GameThread():
     def __init__(self, players_info:dict):
         super().__init__()
@@ -41,9 +44,9 @@ class GameThread():
             'public_cards':[],
             'names':defaultdict(dict)
         }
+        self.restart_name = 'null'
     
     def restart(self):
-        #print(self.players_name)
         for each in self.game.games_info['chips']:
             if self.game.games_info['chips'][each] < 20:
                 self.remove_player.append(each)
@@ -71,6 +74,7 @@ class GameThread():
                     self.game.games_info['chips'][name] += chip
                 self.add_player.pop(name)
         if len(self.players_name) <= 1:
+            self.game.current_state = 'pre-flop'
             return 
         self.players_name = self.players_name[1:] +[self.players_name[0]]
         games_info = {}
@@ -99,11 +103,9 @@ class GameThread():
         return
     
     def refresh(self, players, i, pre_state,now_state):
-        #time.sleep(0.5)
+
         games_info = self.game.games_info
         
-        #betted_chips = sorted(list(self.game.games_info['bet_chip'].values()))
-        #self.mini_bet = max((betted_chips[-1] - betted_chips[-2]),20)
         self.mini_bet = 20
         self.max_bet = self.game.max_bet
         self.pot = self.game.pot
@@ -111,8 +113,8 @@ class GameThread():
         if now_state == 'finished':
             if len(self.game.games_info['all_in_player']) > 0:
                 self.public_cards = self.game.games_info['public_cards'].copy()
-            #time.sleep(1)
-            self.restart()
+            #self.restart()
+            self.restart_name = (self.game.games_info['names'] + self.game.games_info['all_in_player'])[0]
             return
         else:
             if pre_state != now_state:
@@ -132,7 +134,7 @@ class GameThread():
             
             if self.player_to_action in self.remove_player:
                 self.round(self.player_to_action,-2)
-    def round(self,players,action):
+    def round(self,players,action, room_name):
         pre_state = self.game.current_state
         i = self.game.games_info['names'].index(players)
         self.game.round(players,action)

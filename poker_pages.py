@@ -1,9 +1,9 @@
 import streamlit as st
 from copy import deepcopy
-from poker_action import signup, login, get_rooms, create_room, join_room, get_room_info, refreash_buyin, exit_room, start_game, get_game_info, action, join_game, restart_game
+from poker_action import signup, login, get_rooms, restart_thread, create_room, join_room, get_room_info, refreash_buyin, exit_room, start_game, get_game_info, action, join_game, restart_game
 from streamlit import session_state
-import numpy as np
-from PIL import Image
+import time
+from threading import Thread
 
 def login_page():
     
@@ -96,7 +96,7 @@ def in_room():
 def encode_cards(cards:list):
     #cards: [(1,2),(2,3)]
     cards = deepcopy(cards)
-    if not cards: return ' '
+    if not cards: return ''
     if type(cards[0]) == str:
         return ' '.join(cards)
     decors = [':red[♥',':red[♦','♠','♣']
@@ -117,13 +117,10 @@ def game():
             return 
     games_info = get_game_info(session_state.room)
     with col1:
-        st.title('**Room: {}**——第{}局'.format(session_state.room,games_info['game_count']))
-
-    if session_state.name not in games_info['players_in_game'] and session_state.name not in games_info['add_player']:
-        session_state.state = 'in_room'
-        st.rerun()
-        return 
+        st.title('**Room: {}**——第{}局'.format(session_state.room,games_info['game_count'])) 
     game_page(games_info)
+
+
 
 def game_page(games_info):
     #st.write(games_info)
@@ -134,12 +131,33 @@ def game_page(games_info):
     public_cards = deepcopy(games_info['public_cards'])
     hand_cards = deepcopy(games_info['hand_cards'])
     
-    public_cards = encode_cards(public_cards)
+    public_cards = encode_cards(public_cards).split(' ')
+
+    if public_cards  == ['']:
+        public_cards = []
+        session_state.public_cards = []
     
     col1, col2 = st.columns(2)
     with col1:
         container = st.container(border=True)
-        container.subheader('公共牌: {}'.format(public_cards))
+        container.subheader('公共牌: {}'.format(' '.join(session_state.public_cards)))
+    
+    if len(public_cards) != len(session_state.public_cards):
+        session_state.public_cards.append(public_cards[len(session_state.public_cards)])
+        
+        time.sleep(1.5)
+        st.rerun()
+    elif games_info['state'] == 'finished':
+        if session_state.name == games_info['restart_name']:
+            restart_thread(session_state.room)
+        
+        
+    if session_state.name not in games_info['players_in_game'] and session_state.name not in games_info['add_player']:
+        session_state.state = 'in_room'
+        time.sleep(2)
+        st.rerun()
+    
+    
     with col2:
         container = st.container(border=True)
         container.subheader('底池: {}'.format(games_info['pot']))
@@ -162,6 +180,8 @@ def game_page(games_info):
             else:
                 if games_info['state'] != 'finished':
                     continue
+                else:
+                    container.write('**-**')
                 # container.write('**×**')
             container.text('{}'.format(players[i]))
             
@@ -201,7 +221,7 @@ def game_page(games_info):
                 if st.button(text):
                     action(session_state.room,session_state.name,call)        
             with col3:
-                    act = st.number_input(label=' ',min_value=min(20+games_info['max_bet']-games_info['bet_chip'][my_name],games_info['chips'][my_name]),max_value=games_info['chips'][my_name],step=20)
+                    act = st.number_input(label=' ',min_value=min(20+games_info['max_bet']-games_info['bet_chip'][my_name],games_info['chips'][my_name]),max_value=games_info['chips'][my_name],step=20,label_visibility='collapsed')
                     if st.button('加注 {}'.format(act)):
                         action(session_state.room,session_state.name,act)
     session_state.game_count = games_info['game_count']

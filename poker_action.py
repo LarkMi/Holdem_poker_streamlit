@@ -5,6 +5,7 @@ from poker_gamethread import GameThread
 from collections import defaultdict
 from streamlit import session_state
 import os
+import time
 
 if 'id_pwd' not in os.listdir():
     with open('id_pwd','wb') as f:
@@ -143,7 +144,14 @@ def start_game(room_name):
 
     return '0'
 
-
+def restart_thread(room_name):
+    with server_state_lock.rooms:
+        rooms = server_state.rooms
+    time.sleep(3)
+    rooms[room_name]['game'].restart()
+    force_rerun_bound_sessions(room_name)
+    
+    
 def get_game_info(room_name):
     with server_state_lock.rooms:
         rooms = server_state.rooms
@@ -166,13 +174,15 @@ def get_game_info(room_name):
     re['game_count']        = game.game_count
     re['ini_chips']         = game.ini_chips
     re['add_player']        = game.add_player
+    re['restart_name']      = game.restart_name
     
     return re
+
 
 def action(room_name,name,act):
     with server_state_lock.rooms:
         rooms = server_state.rooms
-    rooms[room_name]['game'].round(name,act)
+    rooms[room_name]['game'].round(name,act,room_name)
     force_rerun_bound_sessions(room_name)
 
 def join_game(room_name,name,buy_in):

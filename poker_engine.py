@@ -261,8 +261,7 @@ class Game(object):
             self.current_state = 'finish'
             logging.info('Game finish')
             self.finish()
-            
-            
+    
     def round(self, player, action):
         logging.debug(str(self.games_info))
         logging.debug('pot: {}'.format(self.pot))
